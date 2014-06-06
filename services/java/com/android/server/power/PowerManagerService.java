@@ -661,17 +661,6 @@ public final class PowerManagerService extends IPowerManager.Stub
                 Settings.System.KEYBOARD_BRIGHTNESS, mKeyboardBrightnessSettingDefault,
                 UserHandle.USER_CURRENT);
 
-        mButtonTimeout = Settings.System.getIntForUser(resolver,
-                Settings.System.BUTTON_BACKLIGHT_TIMEOUT,
-                DEFAULT_BUTTON_ON_DURATION, UserHandle.USER_CURRENT);
-
-        mButtonBrightness = Settings.System.getIntForUser(resolver,
-                Settings.System.BUTTON_BRIGHTNESS, mButtonBrightnessSettingDefault,
-                UserHandle.USER_CURRENT);
-        mKeyboardBrightness = Settings.System.getIntForUser(resolver,
-                Settings.System.KEYBOARD_BRIGHTNESS, mKeyboardBrightnessSettingDefault,
-                UserHandle.USER_CURRENT);
-
         mDirty |= DIRTY_SETTINGS;
     }
 
@@ -1134,21 +1123,6 @@ public final class PowerManagerService extends IPowerManager.Stub
             }
         }
         return false;
-    }
-
-    public void setKeyboardVisibility(boolean visible) {
-        synchronized (mLock) {
-            if (DEBUG_SPEW) {
-                Slog.d(TAG, "setKeyboardVisibility: " + visible);
-            }
-            if (mKeyboardVisible != visible) {
-                mKeyboardVisible = visible;
-                synchronized (mLock) {
-                    mDirty |= DIRTY_USER_ACTIVITY;
-                    updatePowerStateLocked();
-                }
-            }
-        }
     }
 
     @Override // Binder call
