@@ -1904,7 +1904,7 @@ public final class Settings {
          * Valid value range is between 0 and {@link PowerManager#getMaximumKeyboardBrightness()}
          * @hide
          */
-        public static final String KEYBOARD_BRIGHTNESS = "keyboard_brightness";f
+        public static final String KEYBOARD_BRIGHTNESS = "keyboard_brightness";
 
         /**
          * The button brightness to be used while the screen is on or after a button press,
