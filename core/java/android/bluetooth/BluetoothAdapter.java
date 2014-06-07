@@ -709,7 +709,10 @@ public final class BluetoothAdapter {
      *         immediate error
      */
     public boolean disable() {
-        return disable(true);
+        try {
+            return mManagerService.disable(true);
+        } catch (RemoteException e) {Log.e(TAG, "", e);}
+        return false;
     }
 
     /**
