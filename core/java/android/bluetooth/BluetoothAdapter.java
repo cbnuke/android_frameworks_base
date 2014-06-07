@@ -1021,7 +1021,6 @@ public final class BluetoothAdapter {
         if (getState() != STATE_ON) return false;
         try {
             IBluetoothGatt iGatt = mManagerService.getBluetoothGatt();
-            return iGatt.isAdvertising();
         } catch (RemoteException e) {
             Log.e(TAG, "", e);
         }
