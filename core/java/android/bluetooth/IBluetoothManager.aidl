@@ -35,7 +35,7 @@ interface IBluetoothManager
     boolean isEnabled();
     boolean enable();
     boolean enableNoAutoConnect();
-    boolean disable(boolean persist);
+    boolean disable(String callingPackage, boolean persist);
     IBluetoothGatt getBluetoothGatt();
 
     String getAddress();
