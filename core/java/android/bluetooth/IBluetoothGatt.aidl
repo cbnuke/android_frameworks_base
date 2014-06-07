@@ -80,7 +80,7 @@ interface IBluetoothGatt {
     void serverDisconnect(in int serverIf, in String address);
     void beginServiceDeclaration(in int serverIf, in int srvcType,
                             in int srvcInstanceId, in int minHandles,
-                            in ParcelUuid srvcId);
+                            in ParcelUuid srvcId, boolean advertisePreferred);
     void addIncludedService(in int serverIf, in int srvcType,
                             in int srvcInstanceId, in ParcelUuid srvcId);
     void addCharacteristic(in int serverIf, in ParcelUuid charId,
