@@ -45,7 +45,7 @@ interface IBluetoothGatt {
     byte[] getAdvManufacturerData();
     List<ParcelUuid> getAdvServiceUuids();
     void removeAdvManufacturerCodeAndData(int manufacturerCode);
-    boolean isAdvertising();
+    boolean;
     void refreshDevice(in int clientIf, in String address);
     void discoverServices(in int clientIf, in String address);
     void readCharacteristic(in int clientIf, in String address, in int srvcType,
