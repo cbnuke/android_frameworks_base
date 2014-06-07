@@ -725,7 +725,7 @@ public final class BluetoothAdapter {
     public boolean disable(boolean persist) {
 
         try {
-            return mManagerService.disable(ActivityThread.currentPackageName(), persist);
+            return mManagerService.disable(persist);
         } catch (RemoteException e) {Log.e(TAG, "", e);}
         return false;
     }
