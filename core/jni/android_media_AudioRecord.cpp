@@ -201,14 +201,7 @@ android_media_AudioRecord_setup(JNIEnv *env, jobject thiz, jobject weak_this,
     //ALOGI("sampleRate=%d, audioFormat=%d, channel mask=%x, buffSizeInBytes=%d, source=%d",
     //     sampleRateInHertz, audioFormat, channelMask, buffSizeInBytes, source);
 #ifdef STE_HARDWARE
-	ALOGI(">> Entering android_media_AudioRecord_setup");
-    ALOGI("sampleRate=%d, audioFormat=%d, channel mask=%x, buffSizeInBytes=%d, source=%d",
-         sampleRateInHertz, audioFormat, channelMask, buffSizeInBytes, source);
-    /* We don't have mic source 1999 so switch to regular mic source 1*/
-    if(source == 1999){
-		source = 1;
-		ALOGI("STE_HARDWARE source switched from 1999 to 1");
-	}
+    if (source == 1999) source = 1;
 #endif
 
     if (!audio_is_input_channel(channelMask)) {
