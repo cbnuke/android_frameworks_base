@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.IHardwareService;
 import android.os.ServiceManager;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.util.Slog;
 
 import java.io.FileInputStream;
@@ -47,6 +48,11 @@ public class LightsService {
     public static final int LIGHT_FLASH_NONE = 0;
     public static final int LIGHT_FLASH_TIMED = 1;
     public static final int LIGHT_FLASH_HARDWARE = 2;
+
+    /**
+     * Check if the device supports illumination fix
+     */
+    public static final boolean ILLUMINATION_ENABLED = SystemProperties.getBoolean("ro.semc.illumination", false);
 
     /**
      * Light brightness is managed by a user setting.
@@ -112,19 +118,36 @@ public class LightsService {
 
         private void stopFlashing() {
             synchronized (this) {
-                setLightLocked(mColor, LIGHT_FLASH_NONE, 0, 0, BRIGHTNESS_MODE_USER);
+                if (ILLUMINATION_ENABLED) {
+                    setLightLocked(0, LIGHT_FLASH_NONE, 0, 0, BRIGHTNESS_MODE_USER);
+                } else {
+                    setLightLocked(mColor, LIGHT_FLASH_NONE, 0, 0, BRIGHTNESS_MODE_USER);
+                }
             }
         }
 
         private void setLightLocked(int color, int mode, int onMS, int offMS, int brightnessMode) {
-            if (color != mColor || mode != mMode || onMS != mOnMS || offMS != mOffMS) {
-                if (DEBUG) Slog.v(TAG, "setLight #" + mId + ": color=#"
-                        + Integer.toHexString(color));
-                mColor = color;
-                mMode = mode;
-                mOnMS = onMS;
-                mOffMS = offMS;
-                setLight_native(mNativePointer, mId, color, mode, onMS, offMS, brightnessMode);
+            if (ILLUMINATION_ENABLED) {
+                if (color != mColor || mode != mMode || onMS != mOnMS || offMS != mOffMS || brightnessMode != mBrightnessMode) {
+                    if (DEBUG) Slog.v(TAG, "setLight #" + mId + ": color=#"
+                            + Integer.toHexString(color));
+                    mColor = color;
+                    mMode = mode;
+                    mOnMS = onMS;
+                    mOffMS = offMS;
+                    mBrightnessMode = brightnessMode;
+                    setLight_native(mNativePointer, mId, color, mode, onMS, offMS, brightnessMode);
+                }
+            } else {
+                if (color != mColor || mode != mMode || onMS != mOnMS || offMS != mOffMS) {
+                    if (DEBUG) Slog.v(TAG, "setLight #" + mId + ": color=#"
+                            + Integer.toHexString(color));
+                    mColor = color;
+                    mMode = mode;
+                    mOnMS = onMS;
+                    mOffMS = offMS;
+                    setLight_native(mNativePointer, mId, color, mode, onMS, offMS, brightnessMode);
+                }
             }
         }
 
@@ -133,6 +156,7 @@ public class LightsService {
         private int mMode;
         private int mOnMS;
         private int mOffMS;
+        private int mBrightnessMode;
         private boolean mFlashing;
     }
 

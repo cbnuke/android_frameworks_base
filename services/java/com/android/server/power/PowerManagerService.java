@@ -181,6 +181,9 @@ public final class PowerManagerService extends IPowerManager.Stub
 
     private static final float PROXIMITY_NEAR_THRESHOLD = 5.0f;
 
+    // Check if the device supports illumination fix
+    private static final boolean ILLUMINATION_ENABLED = SystemProperties.getBoolean("ro.semc.illumination", false);
+
     private Context mContext;
     private LightsService mLightsService;
     private BatteryService mBatteryService;
@@ -207,6 +210,9 @@ public final class PowerManagerService extends IPowerManager.Stub
     private int mButtonBrightnessSettingDefault;
     private int mKeyboardBrightness;
     private int mKeyboardBrightnessSettingDefault;
+    private int mEnableButtonLight;
+    private int mIllumination;
+
 
     private final Object mLock = new Object();
 
@@ -587,6 +593,12 @@ public final class PowerManagerService extends IPowerManager.Stub
                     Settings.System.PROXIMITY_ON_WAKE),
                     false, mSettingsObserver, UserHandle.USER_ALL);
 
+            if (ILLUMINATION_ENABLED) {
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.ILLUMINATION_BAR),
+                    false, mSettingsObserver, UserHandle.USER_ALL);
+            }
+
             // Go.
             readConfigurationLocked();
             updateSettingsLocked();
@@ -689,6 +701,12 @@ public final class PowerManagerService extends IPowerManager.Stub
         mKeyboardBrightness = Settings.System.getIntForUser(resolver,
                 Settings.System.KEYBOARD_BRIGHTNESS, mKeyboardBrightnessSettingDefault,
                 UserHandle.USER_CURRENT);
+
+        if (ILLUMINATION_ENABLED) {
+        mIllumination = Settings.System.getIntForUser(resolver,
+                Settings.System.ILLUMINATION_BAR, 0,
+                UserHandle.USER_CURRENT);
+        }
 
         mDirty |= DIRTY_SETTINGS;
     }
@@ -1136,6 +1154,14 @@ public final class PowerManagerService extends IPowerManager.Stub
         }
 
         mNotifier.onUserActivity(event, uid);
+
+        if (ILLUMINATION_ENABLED) {
+            if (event == PowerManager.USER_ACTIVITY_EVENT_BUTTON) {
+                mEnableButtonLight = 1;
+            } else {
+                mEnableButtonLight = 0;
+            }
+        }
 
         if ((flags & PowerManager.USER_ACTIVITY_FLAG_NO_CHANGE_LIGHTS) != 0) {
             if (eventTime > mLastUserActivityTimeNoChangeLights
@@ -1738,7 +1764,14 @@ public final class PowerManagerService extends IPowerManager.Stub
                         if (mButtonTimeout != 0 && now > mLastUserActivityTime + mButtonTimeout) {
                             mButtonsLight.setBrightness(0);
                         } else {
-                            mButtonsLight.setBrightness(buttonBrightness);
+                            if (ILLUMINATION_ENABLED) {
+                                if (mEnableButtonLight == 1 && mIllumination == 1) {
+                                    mButtonsLight.setBrightness(buttonBrightness);
+                                    mEnableButtonLight = 0;
+                                }
+                            } else {
+                                mButtonsLight.setBrightness(buttonBrightness);
+                            }
                             if (buttonBrightness != 0 && mButtonTimeout != 0) {
                                 nextTimeout = now + mButtonTimeout;
                             }
