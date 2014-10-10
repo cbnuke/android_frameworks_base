@@ -2636,13 +2636,6 @@ public final class Settings {
         public static final String ENABLE_MWI_NOTIFICATION = "enable_mwi_notification";
 
         /**
-         * Whether the Illumination Bar should light up on hardware key press
-         * events. The value is boolean (1 or 0).
-         * @hide
-         */
-        public static final String ILLUMINATION_BAR = "illumination_bar";
-
-        /**
          * Show pointer location on screen?
          * 0 = no
          * 1 = yes
