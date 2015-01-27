@@ -18,12 +18,16 @@ package com.android.internal.util.cm;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.net.ConnectivityManager;
+import android.nfc.NfcAdapter;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import com.android.internal.telephony.PhoneConstants;
 
 import java.util.Iterator;
 import java.util.List;
@@ -74,6 +78,12 @@ public class QSUtils {
                     case QSConstants.TILE_BLUETOOTH:
                         removeTile = !deviceSupportsBluetooth();
                         break;
+                    case QSConstants.TILE_NFC:
+                        removeTile = !deviceSupportsNfc(context);
+                        break;
+                    case QSConstants.TILE_COMPASS:
+                        removeTile = !deviceSupportsCompass(context);
+                        break;
                 }
                 if (removeTile) {
                     iterator.remove();
@@ -85,7 +95,14 @@ public class QSUtils {
         }
     }
 
-    private static boolean deviceSupportsDdsSupported(Context context) {
+    public static boolean deviceSupportsLte(Context ctx) {
+        final TelephonyManager tm = (TelephonyManager)
+                ctx.getSystemService(Context.TELEPHONY_SERVICE);
+        return (tm.getLteOnCdmaMode() == PhoneConstants.LTE_ON_CDMA_TRUE)
+                || tm.getLteOnGsmMode() != 0;
+    }
+
+    public static boolean deviceSupportsDdsSupported(Context context) {
         TelephonyManager tm = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.isMultiSimEnabled()
@@ -100,6 +117,10 @@ public class QSUtils {
 
     public static boolean deviceSupportsBluetooth() {
         return BluetoothAdapter.getDefaultAdapter() != null;
+    }
+
+    public static boolean deviceSupportsNfc(Context context) {
+        return NfcAdapter.getDefaultAdapter(context) != null;
     }
 
     public static boolean deviceSupportsFlashLight(Context context) {
@@ -122,5 +143,11 @@ public class QSUtils {
             // Ignore
         }
         return false;
+    }
+
+    public static boolean deviceSupportsCompass(Context context) {
+        SensorManager sm = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        return sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null
+                && sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null;
     }
 }
