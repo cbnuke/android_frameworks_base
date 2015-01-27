@@ -206,26 +206,7 @@ import java.util.List;
          */
         public void onClientMetadataUpdate(MetadataEditor metadataEditor);
 
-        /**
-         * @hide
-         */
-        public void onClientFolderInfoBrowsedPlayer(String stringUri);
-
-        /**
-         * @hide
-         */
-        public void onClientUpdateNowPlayingEntries(long[] playList);
-
-        /**
-         * @hide
-         */
-        public void onClientNowPlayingContentChange();
-
-        /**
-         * @hide
-         */
-        public void onClientPlayItemResponse(boolean success);
-
+        
     };
 
 
@@ -1183,7 +1164,7 @@ import java.util.List;
         }
 
         if (l != null) {
-            l.onClientFolderInfoBrowsedPlayer(stringUri);
+           // l.onClientFolderInfoBrowsedPlayer(stringUri);
         }
     }
 
@@ -1198,7 +1179,7 @@ import java.util.List;
             l = mOnClientUpdateListener;
         }
         if (l != null) {
-            l.onClientUpdateNowPlayingEntries(playList);
+            //l.onClientUpdateNowPlayingEntries(playList);
         }
     }
 
@@ -1214,7 +1195,7 @@ import java.util.List;
         }
 
         if (l != null) {
-            l.onClientNowPlayingContentChange();
+            //l.onClientNowPlayingContentChange();
         }
     }
 
@@ -1230,7 +1211,7 @@ import java.util.List;
         }
 
         if (l != null) {
-            l.onClientPlayItemResponse(success);
+           // l.onClientPlayItemResponse(success);
         }
     }
 
